@@ -36,14 +36,14 @@ def alphaphi(ax,s,ra,rb=0):
 def plot_data(r, a, b=None, color='--r', xlim_a=None, xlim_b=None,
         xlb=None, ylb=None, ttl=None, lbl=None,
         has_legend=False, log_y=False):
-    if b is not None: plot(r, a, r, b, color, label=lbl)
-    else: plot(r, a, color, label=lbl)
-    if (xlim_a and xlim_b): xlim(xlim_a,xlim_b)
-    if xlb: xlabel(xlb)
-    if ylb: ylabel(ylb)
-    if has_legend: legend()
-    if ttl: title(ttl)
-    if log_y: yscale("log")
+    if b is not None:       plot(r, a, r, b, color, label=lbl)
+    else:                   plot(r, a, color, label=lbl)
+    if xlim_a and xlim_b:   xlim(xlim_a,xlim_b)
+    if xlb:                 xlabel(xlb)
+    if ylb:                 ylabel(ylb)
+    if has_legend:          legend()
+    if ttl:                 title(ttl)
+    if log_y:               yscale("log")
     grid()
     show()
 
@@ -202,40 +202,39 @@ log_format = "{} {}"
 v = zeros([5,5]) # array for evolution functions
 for t in arange(0.0, tf, h):
   for step in range(4):
-    Chi = dot(c0 + v[step,0], psi)
-    rChi = dot(c0 + v[step,0], rpsi)
-    rrChi = dot(c0 + v[step,0], rrpsi)
-    Phi = dot(a0 + v[step,1], psi)
-    rPhi = dot(a0 + v[step,1], rpsi)
-    rrPhi = dot(a0 + v[step,1], rrpsi)
-    Alpha = 1 + dot(al0 + v[step,2], psi)
-    rAlpha = dot(al0 + v[step,2], rpsi)
-    rrAlpha = dot(al0 + v[step,2], rrpsi)
-    Pi = dot(a0 + v[step,3], psi)
-    rPi = dot(a0 + v[step,3], rpsi)
-    K = dot(fk0 + v[step,4], SB1)
-    rK = dot(fk0 + v[step,4], rSB1)
+    Chi      = dot(c0 + v[step,0], psi)
+    rChi     = dot(c0 + v[step,0], rpsi)
+    rrChi    = dot(c0 + v[step,0], rrpsi)
+    Phi      = dot(a0 + v[step,1], psi)
+    rPhi     = dot(a0 + v[step,1], rpsi)
+    rrPhi    = dot(a0 + v[step,1], rrpsi)
+    Alpha    = dot(al0 + v[step,2], psi) + 1
+    rAlpha   = dot(al0 + v[step,2], rpsi)
+    rrAlpha  = dot(al0 + v[step,2], rrpsi)
+    Pi       = dot(a0 + v[step,3], psi)
+    rPi      = dot(a0 + v[step,3], rpsi)
+    K        = dot(fk0 + v[step,4], SB1)
+    rK       = dot(fk0 + v[step,4], rSB1)
 
-    vx = exp(4*Chi)
-    vz = exp(-4*Chi)
+    vx       = exp(4*Chi)
+    vz       = exp(-4*Chi)
 
     # rhsk * inverted beta matrix
-    ck0 = dot((1 + 2*r*rChi)*vx*K/r + vx*rK - Pi*rPhi*vx, inv(2*rChi*SB1 + rSB1 + 3/r*SB1))
-    Krr = dot(ck0, SB1)
-    rKrr = dot(ck0, rSB1)
+    ck0      = dot((1 + 2*r*rChi)*vx*K/r + vx*rK - Pi*rPhi*vx, inv(2*rChi*SB1 + rSB1 + 3/r*SB1))
+    Krr      = dot(ck0, SB1)
+    rKrr     = dot(ck0, rSB1)
 
     # rhsbe * inverted beta matrix
-    be0 = dot(3/2*Alpha*vz*Krr - 1/2*Alpha*K, inv(rSB2 - SB2/r))
-    Beta = dot(be0, SB2)
-    rBeta = dot(be0, rSB2)
+    be0      = dot(3/2*Alpha*vz*Krr - 1/2*Alpha*K, inv(rSB2 - SB2/r))
+    Beta     = dot(be0, SB2)
+    rBeta    = dot(be0, rSB2)
       
-    dal = dot(epsilon0*(rrAlpha+rAlpha*(2/r+2*rChi))*vz - epsilon0*Alpha*(1.5*exp(-8*Chi)*Krr**2+0.5*K**2-vz*K*Krr)
-          - epsilon0*Alpha*Pi**2 - epsilon0*Beta*rK - epsilon0*eta0*K,inv_psi)
-    db = dot(Beta*rPi + vz*rPhi*(2*Alpha/r + 2*Alpha*rChi) + vz*(Alpha*rrPhi + rAlpha*rPhi) + Alpha*K*Pi, inv_psi)
-    dc = dot(1/2*rBeta + Beta*rChi - 1/2*Alpha*vz*Krr, inv_psi)
-    da = dot(Alpha*Pi + Beta*rPhi, inv_psi)
-    dfk = dot(-eta0*K, inv_SB1)
-
+    dal      = dot(epsilon0*(rrAlpha+rAlpha*(2/r+2*rChi))*vz - epsilon0*Alpha*(1.5*exp(-8*Chi)*Krr**2+0.5*K**2-vz*K*Krr)
+             - epsilon0*Alpha*Pi**2 - epsilon0*Beta*rK - epsilon0*eta0*K,inv_psi)
+    db       = dot(Beta*rPi + vz*rPhi*(2*Alpha/r + 2*Alpha*rChi) + vz*(Alpha*rrPhi + rAlpha*rPhi) + Alpha*K*Pi, inv_psi)
+    dc       = dot(1/2*rBeta + Beta*rChi - 1/2*Alpha*vz*Krr, inv_psi)
+    da       = dot(Alpha*Pi + Beta*rPhi, inv_psi)
+    dfk      = dot(-eta0*K, inv_SB1)
 
     d = 2 if (step == 1 or step == 2) else 1
     m = lambda x: (h*x)/d 
@@ -243,14 +242,14 @@ for t in arange(0.0, tf, h):
 
     if step == 0:
       # Hamiltonian constraint L2 error
-      qPhi = dot(a0, qpsi)
-      rqPhi= dot(a0, rqpsi)
-      qPi = dot(b0, qpsi)
-      qChi = dot(c0, qpsi)
-      rqChi = dot(c0, rqpsi)
+      qPhi   = dot(a0, qpsi)
+      rqPhi  = dot(a0, rqpsi)
+      qPi    = dot(b0, qpsi)
+      qChi   = dot(c0, qpsi)
+      rqChi  = dot(c0, rqpsi)
       rrqChi = dot(c0, rrqpsi)
-      qKrr = dot(ck0, qSB1)
-      qK = dot(fk0, qSB1)
+      qKrr   = dot(ck0, qSB1)
+      qK     = dot(fk0, qSB1)
   
       vx = exp(4*qChi)
       vz = exp(-4*qChi)
